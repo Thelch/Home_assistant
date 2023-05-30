@@ -11,6 +11,6 @@ To get them to work you will need:
 
 Changes needed in Batterie_loading_Awtrix :
 
-- find and replace: input_number.batterie_test with your batterie sensor
+- find and replace: sensor.victron_battery_soc with your batterie sensor
 - find and replace: sensor.victron_system_battery_state with your batterie sensor status
 - find and replace: awtrix_a8f0d0 with your Pixelclock Name
