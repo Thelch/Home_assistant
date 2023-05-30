@@ -10,7 +10,7 @@ To get them to work you will need:
 
 # Automatisations:
 
-Batterie_loading_Awtrix
+## Batterie_loading_Awtrix
 
 Changes text color and icon depending on charing level of the battery
 
