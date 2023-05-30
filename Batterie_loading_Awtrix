@@ -1,10 +1,6 @@
 alias: Batterie_loading_Awtrix
-description: ""
+description: Shows the battery status on Ulanzi Pixel Clock with animated loading icons
 trigger:
-  - platform: numeric_state
-    entity_id: input_number.batterie_test
-    above: 1
-    enabled: false
   - platform: time_pattern
     minutes: /1
 condition: []
@@ -19,10 +15,6 @@ action:
         below: 101
         enabled: true
     then:
-      - service: input_boolean.turn_on
-        data: {}
-        target:
-          entity_id: input_boolean.charging
       - service: mqtt.publish
         data:
           payload: >-
@@ -30,11 +22,6 @@ action:
             )}}%","icon":"battery-charging-100","color":"#00ff1e"}
           topic: awtrix_a8f0d0/notify
           retain: true
-    else:
-      - service: input_boolean.turn_off
-        data: {}
-        target:
-          entity_id: input_boolean.charging
   - if:
       - condition: state
         entity_id: sensor.victron_system_battery_state
