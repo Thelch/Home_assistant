@@ -3,87 +3,103 @@ description: Shows the battery status on Ulanzi Pixel Clock with animated loadin
 trigger:
   - platform: time_pattern
     minutes: /1
-condition: []
-action:
-  - if:
+condition:
+  - condition: or
+    conditions:
       - condition: state
         entity_id: sensor.victron_system_battery_state
         state: CHARGING
+      - condition: state
+        entity_id: sensor.victron_system_battery_state
+        state: IDLE
+action:
+  - if:
       - condition: numeric_state
-        entity_id: input_number.batterie_test
-        above: 80
+        entity_id: sensor.victron_battery_soc
+        above: 99
         below: 101
         enabled: true
     then:
       - service: mqtt.publish
         data:
+          qos: 0
           payload: >-
-            {"text":"{{ states('input_number.batterie_test'
-            )}}%","icon":"battery-charging-100","color":"#00ff1e"}
+            {"text":"{{ states('sensor.victron_battery_soc')}}%", "icon":"6363",
+            "color":"#00ff1e", "stack":"true", "duration":"10"}
+          topic: awtrix_a8f0d0/notify
+          retain: false
+        enabled: true
+    enabled: true
+  - if:
+      - condition: numeric_state
+        entity_id: sensor.victron_battery_soc
+        above: 80
+        below: 100
+        enabled: true
+    then:
+      - service: mqtt.publish
+        data:
+          payload: >-
+            {"text":"{{ states('sensor.victron_battery_soc')}}%",
+            "icon":"battery-charging-100", "color":"#00ff1e", "stack":"true",
+            "duration":"10"}}
           topic: awtrix_a8f0d0/notify
           retain: true
+    enabled: true
   - if:
-      - condition: state
-        entity_id: sensor.victron_system_battery_state
-        state: CHARGING
       - condition: numeric_state
-        entity_id: input_number.batterie_test
+        entity_id: sensor.victron_battery_soc
         above: 60
         below: 81
     then:
       - service: mqtt.publish
         data:
           payload: >-
-            {"text":"{{ states('input_number.batterie_test'
+            {"text":"{{ states('sensor.victron_battery_soc'
             )}}%","icon":"battery-charging-80","color":"#97db00"}
           retain: false
           topic: awtrix_a8f0d0/notify
+    enabled: true
   - if:
-      - condition: state
-        entity_id: sensor.victron_system_battery_state
-        state: CHARGING
       - condition: numeric_state
-        entity_id: input_number.batterie_test
+        entity_id: sensor.victron_battery_soc
         above: 40
         below: 61
     then:
       - service: mqtt.publish
         data:
           payload: >-
-            {"text":"{{ states('input_number.batterie_test'
+            {"text":"{{ states('sensor.victron_battery_soc'
             )}}%","icon":"battery-charging-60","color":"#cbb200"}
           retain: false
           topic: awtrix_a8f0d0/notify
+    enabled: true
   - if:
-      - condition: state
-        entity_id: sensor.victron_system_battery_state
-        state: CHARGING
       - condition: numeric_state
-        entity_id: input_number.batterie_test
+        entity_id: sensor.victron_battery_soc
         above: 20
         below: 41
     then:
       - service: mqtt.publish
         data:
           payload: >-
-            {"text":"{{ states('input_number.batterie_test'
+            {"text":"{{ states('sensor.victron_battery_soc'
             )}}%","icon":"battery-charging-40","color":"#ed8300"}
           retain: false
           topic: awtrix_a8f0d0/notify
+    enabled: true
   - if:
-      - condition: state
-        entity_id: sensor.victron_system_battery_state
-        state: CHARGING
       - condition: numeric_state
-        entity_id: input_number.batterie_test
+        entity_id: sensor.victron_battery_soc
         above: 0
         below: 21
     then:
       - service: mqtt.publish
         data:
           payload: >-
-            {"text":"{{ states('input_number.batterie_test'
+            {"text":"{{ states('sensor.victron_battery_soc'
             )}}%","icon":"battery-charging-20","color":"#fd4500"}
           retain: false
           topic: awtrix_a8f0d0/notify
+    enabled: true
 mode: single
