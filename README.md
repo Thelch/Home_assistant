@@ -1,4 +1,4 @@
-# Home_assistant
+# Home Assistant
 Automatisation Blueprints for Home Assistant 
 
 Here do you find my Automatisation Blueprints for Home Assistant
@@ -8,6 +8,11 @@ To get them to work you will need:
 - Ulanzi Pixel Clock flashed with AWTRIX firmware
 - Icons for Charging/ discharging
 
+# Automatisations:
+
+Batterie_loading_Awtrix
+
+Changes text color and icon depending on charing level of the battery
 
 Changes needed in Batterie_loading_Awtrix :
 
