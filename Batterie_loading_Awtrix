@@ -56,7 +56,8 @@ action:
         data:
           payload: >-
             {"text":"{{ states('sensor.victron_battery_soc'
-            )}}%","icon":"battery-charging-80","color":"#97db00"}
+            )}}%","icon":"battery-charging-80","color":"#97db00",
+            "stack":"true", "duration":"10"}
           retain: false
           topic: awtrix_a8f0d0/notify
     enabled: true
@@ -70,7 +71,8 @@ action:
         data:
           payload: >-
             {"text":"{{ states('sensor.victron_battery_soc'
-            )}}%","icon":"battery-charging-60","color":"#cbb200"}
+            )}}%","icon":"battery-charging-60","color":"#cbb200",
+            "stack":"true", "duration":"10"}
           retain: false
           topic: awtrix_a8f0d0/notify
     enabled: true
@@ -84,7 +86,8 @@ action:
         data:
           payload: >-
             {"text":"{{ states('sensor.victron_battery_soc'
-            )}}%","icon":"battery-charging-40","color":"#ed8300"}
+            )}}%","icon":"battery-charging-40","color":"#ed8300",
+            "stack":"true", "duration":"10"}
           retain: false
           topic: awtrix_a8f0d0/notify
     enabled: true
@@ -98,7 +101,8 @@ action:
         data:
           payload: >-
             {"text":"{{ states('sensor.victron_battery_soc'
-            )}}%","icon":"battery-charging-20","color":"#fd4500"}
+            )}}%","icon":"battery-charging-20","color":"#fd4500",
+            "stack":"true", "duration":"10"}
           retain: false
           topic: awtrix_a8f0d0/notify
     enabled: true
