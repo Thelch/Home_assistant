@@ -1,4 +1,3 @@
-alias: Batterie_loading_Awtrix
 description: Shows the battery status on Ulanzi Pixel Clock with animated loading icons
 trigger:
   - platform: time_pattern
@@ -12,98 +11,53 @@ condition:
       - condition: state
         entity_id: sensor.victron_system_battery_state
         state: IDLE
+      - condition: state
+        entity_id: sensor.victron_system_battery_state
+        state: DISCHARGING
 action:
-  - if:
-      - condition: numeric_state
-        entity_id: sensor.victron_battery_soc
-        above: 99
-        below: 101
-        enabled: true
-    then:
-      - service: mqtt.publish
-        data:
-          qos: 0
-          payload: >-
-            {"text":"{{ states('sensor.victron_battery_soc')}}%", "icon":"6363",
-            "color":"#00ff1e", "stack":"true", "duration":"10"}
-          topic: awtrix_a8f0d0/notify
-          retain: false
-        enabled: true
-    enabled: true
-  - if:
-      - condition: numeric_state
-        entity_id: sensor.victron_battery_soc
-        above: 80
-        below: 100
-        enabled: true
-    then:
-      - service: mqtt.publish
-        data:
-          payload: >-
-            {"text":"{{ states('sensor.victron_battery_soc')}}%",
-            "icon":"battery-charging-100", "color":"#00ff1e", "stack":"true",
-            "duration":"10"}}
-          topic: awtrix_a8f0d0/notify
-          retain: true
-    enabled: true
-  - if:
-      - condition: numeric_state
-        entity_id: sensor.victron_battery_soc
-        above: 60
-        below: 81
-    then:
-      - service: mqtt.publish
-        data:
-          payload: >-
-            {"text":"{{ states('sensor.victron_battery_soc'
-            )}}%","icon":"battery-charging-80","color":"#97db00",
-            "stack":"true", "duration":"10"}
-          retain: false
-          topic: awtrix_a8f0d0/notify
-    enabled: true
-  - if:
-      - condition: numeric_state
-        entity_id: sensor.victron_battery_soc
-        above: 40
-        below: 61
-    then:
-      - service: mqtt.publish
-        data:
-          payload: >-
-            {"text":"{{ states('sensor.victron_battery_soc'
-            )}}%","icon":"battery-charging-60","color":"#cbb200",
-            "stack":"true", "duration":"10"}
-          retain: false
-          topic: awtrix_a8f0d0/notify
-    enabled: true
-  - if:
-      - condition: numeric_state
-        entity_id: sensor.victron_battery_soc
-        above: 20
-        below: 41
-    then:
-      - service: mqtt.publish
-        data:
-          payload: >-
-            {"text":"{{ states('sensor.victron_battery_soc'
-            )}}%","icon":"battery-charging-40","color":"#ed8300",
-            "stack":"true", "duration":"10"}
-          retain: false
-          topic: awtrix_a8f0d0/notify
-    enabled: true
-  - if:
-      - condition: numeric_state
-        entity_id: sensor.victron_battery_soc
-        above: 0
-        below: 21
-    then:
-      - service: mqtt.publish
-        data:
-          payload: >-
-            {"text":"{{ states('sensor.victron_battery_soc'
-            )}}%","icon":"battery-charging-20","color":"#fd4500",
-            "stack":"true", "duration":"10"}
-          retain: false
-          topic: awtrix_a8f0d0/notify
-    enabled: true
+  - service: mqtt.publish
+    data_template:
+      topic: awtrix_a8f0d0/notify
+      retain: false
+      payload: >
+        {% set battery_soc = states('sensor.victron_battery_soc') | int %} {%
+        set battery_state = states('sensor.victron_system_battery_state') | string
+        %} {% set battery_soc_limit = states('sensor.victron_settings_ess_batterylife_soclimit') |
+        int %} {% if battery_state  == 'CHARGING' %}
+          {% if battery_soc > 99 %}
+            {"text":"{{ battery_soc }}%", "icon":"6363", "color":"#00ff1e", "stack":"true", "duration":"10"}
+          {% elif battery_soc > 80 %}
+            {"text":"{{ battery_soc }}%", "icon":"battery-charging-100", "color":"#00ff1e", "stack":"true", "duration":"10"}
+          {% elif battery_soc > 60 %}
+            {"text":"{{ battery_soc }}%", "icon":"battery-charging-80", "color":"#97db00", "stack":"true", "duration":"10"}
+          {% elif battery_soc > 40 %}
+            {"text":"{{ battery_soc }}%", "icon":"battery-charging-60", "color":"#cbb200", "stack":"true", "duration":"10"}
+          {% elif battery_soc > 20 %}
+            {"text":"{{ battery_soc }}%", "icon":"battery-charging-40", "color":"#ed8300", "stack":"true", "duration":"10"}
+          {% else %}
+            {"text":"{{ battery_soc }}%", "icon":"battery-charging-20", "color":"#fd4500", "stack":"true", "duration":"10"}
+          {% endif %}
+        {% elif battery_state == 'IDLE' %}
+          {% if battery_soc > 99 %}
+            {"text":"{{ battery_soc }}%", "icon":"6363", "color":"#00ff1e", "stack":"true", "duration":"10"}
+          {% elif battery_soc > 80 %}
+            {"text":"{{ battery_soc }}%", "icon":"6362", "color":"#00ff1e", "stack":"true", "duration":"10"}
+          {% elif battery_soc > 60 %}
+            {"text":"{{ battery_soc }}%", "icon":"6361", "color":"#97db00", "stack":"true", "duration":"10"}
+          {% elif battery_soc > 40 %}
+            {"text":"{{ battery_soc }}%", "icon":"6360", "color":"#cbb200", "stack":"true", "duration":"10"}
+          {% elif battery_soc > 20 %}
+            {"text":"{{ battery_soc }}%", "icon":"6359", "color":"#ed8300", "stack":"true", "duration":"10"}
+          {% else %}
+            {"text":"{{ battery_soc }}%", "icon":"53437", "color":"#fd4500", "stack":"true", "duration":"10"}
+          {% endif %}
+        {% elif battery_state == 'DISCHARGING' %}
+          {% if battery_soc > 50 %}
+            {"text":"{{ battery_soc }}%", "icon":"53305", "color":"#00ff1e", "stack":"true", "duration":"10"}
+          {% elif battery_soc > battery_soc_limit %}
+            {"text":"{{ battery_soc }}%", "icon":"21586", "color":"#cbb200", "stack":"true", "duration":"10"}          
+          {% else %}
+            {"text":"{{ battery_soc }}%", "icon":"53437", "color":"#fd4500", "stack":"true", "duration":"10"}
+          {% endif %}
+        {% endif %}
 mode: single
